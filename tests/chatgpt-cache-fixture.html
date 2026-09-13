@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>ChatGPT cache fixture</title>
+</head>
+<body>
+  <section id="chatgpt-virtualized-first-fixture">
+    <article data-testid="conversation-turn-1">
+      <div data-message-author-role="user" data-message-id="virtual-user-1">
+        <div class="whitespace-pre-wrap">虚拟列表第一问</div>
+      </div>
+    </article>
+    <article data-testid="conversation-turn-2">
+      <div data-message-author-role="assistant" data-message-id="virtual-assistant-2">
+        <div class="markdown"><p>虚拟列表第一答</p></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="chatgpt-virtualized-second-fixture">
+    <article data-testid="conversation-turn-7">
+      <div data-message-author-role="user" data-message-id="virtual-user-7">
+        <div class="whitespace-pre-wrap">虚拟列表第二问</div>
+      </div>
+    </article>
+    <article data-testid="conversation-turn-8">
+      <div data-message-author-role="assistant" data-message-id="virtual-assistant-8">
+        <div class="markdown"><p>虚拟列表第二答</p></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="chatgpt-scroll-fixture" style="height: 120px; overflow-y: auto;">
+    <div style="height: 1000px; position: relative;">
+      <div id="chatgpt-scroll-window" style="position: absolute; inset: 0 auto auto 0;"></div>
+    </div>
+  </section>
+
+  <pre id="test-result">运行中</pre>
+  <script src="../content/extractor.js"></script>
+  <script src="../content/chatgpt-cache.js"></script>
+  <script>
+    (async () => {
+      const failures = [];
+      const assert = (condition, message) => {
+        if (!condition) failures.push(message);
+      };
+
+      const virtualizedSnapshots = [
+        ...collectChatGPTRoleSnapshots(document.getElementById('chatgpt-virtualized-second-fixture')),
+        ...collectChatGPTRoleSnapshots(document.getElementById('chatgpt-virtualized-first-fixture')),
+      ];
+      const virtualizedPairs = buildChatGPTPairsFromSnapshots(virtualizedSnapshots);
+      assert(
+        virtualizedPairs.length === 2
+          && virtualizedPairs[0].question === '虚拟列表第一问'
+          && virtualizedPairs[1].question === '虚拟列表第二问',
+        '不同虚拟化视口中的消息应按真实 turn 顺序配对'
+      );
+
+      const scrollFixture = document.getElementById('chatgpt-scroll-fixture');
+      const scrollWindow = document.getElementById('chatgpt-scroll-window');
+      const renderScrollWindow = () => {
+        scrollWindow.innerHTML = scrollFixture.scrollTop < 500
+          ? `<article data-testid="conversation-turn-1">
+               <div data-message-author-role="user"><div>滚动扫描第一问</div></div>
+             </article>
+             <article data-testid="conversation-turn-2">
+               <div data-message-author-role="assistant"><div>滚动扫描第一答</div></div>
+             </article>`
+          : `<article data-testid="conversation-turn-7">
+               <div data-message-author-role="user"><div>滚动扫描第二问</div></div>
+             </article>
+             <article data-testid="conversation-turn-8">
+               <div data-message-author-role="assistant"><div>滚动扫描第二答</div></div>
+             </article>`;
+      };
+      scrollFixture.addEventListener('scroll', renderScrollWindow);
+      renderScrollWindow();
+
+      let lastScanMessageCount = 0;
+      let lastScanPairCount = 0;
+      const scannedPairs = await scanChatGPTConversationPairs(scrollFixture, {
+        onProgress: ({ messageCount, pairCount }) => {
+          lastScanMessageCount = messageCount;
+          lastScanPairCount = pairCount;
+        },
+      });
+      assert(
+        scannedPairs.length === 2
+          && scannedPairs[0].question === '滚动扫描第一问'
+          && scannedPairs[1].question === '滚动扫描第二问',
+        '扫描器应在虚拟化节点替换时保留全部对话'
+      );
+      assert(lastScanMessageCount === 4, '扫描器应报告已暂存的消息数量');
+      assert(lastScanPairCount === 2, '扫描器应按最终配对口径报告逻辑轮数');
+
+      scrollFixture.scrollTop = 600;
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      let cancelError = null;
+      const cancelStarted = performance.now();
+      try {
+        await scanChatGPTConversationPairs(scrollFixture, {
+          isCancelled: () => true,
+        });
+      } catch (error) {
+        cancelError = error;
+      }
+      assert(cancelError?.code === 'C2N_SCAN_CANCELLED', '关闭面板时应取消后台扫描');
+      assert(scrollFixture.scrollTop === 600, '取消后台扫描后应恢复用户原滚动位置');
+      assert(
+        performance.now() - cancelStarted < 120,
+        '关闭面板后应在 120ms 内取消扫描并恢复位置'
+      );
+
+      const branchCache = new Map();
+      mergeChatGPTSnapshots(branchCache, [{
+        key: 'conversation-turn-2:assistant', text: '旧回答分支',
+      }]);
+      mergeChatGPTSnapshots(branchCache, [{
+        key: 'conversation-turn-2:assistant', text: '当前回答分支',
+      }]);
+      assert(
+        branchCache.size === 1
+          && branchCache.get('conversation-turn-2:assistant').text === '当前回答分支',
+        '同一 turn 的当前回答应覆盖旧分支'
+      );
+
+      const divergentCache = new Map([
+        ['turn-1', { turnIndex: 1, text: '第一轮' }],
+        ['turn-2', { turnIndex: 2, text: '切换分支的位置' }],
+        ['turn-3', { turnIndex: 3, text: '旧分支后续问题' }],
+        ['turn-4', { turnIndex: 4, text: '旧分支后续回答' }],
+      ]);
+      assert(
+        typeof removeChatGPTSnapshotsAfterTurn === 'function',
+        '应提供分支切换后的旧后续消息清理函数'
+      );
+      if (typeof removeChatGPTSnapshotsAfterTurn === 'function') {
+        const branchUpdate = updateChatGPTSnapshotCache(divergentCache, [{
+          key: 'turn-2', turnIndex: 2, text: '当前分支的新回答', messageId: 'new-branch-2',
+        }]);
+        assert(
+          branchUpdate.invalidatesComplete
+            && divergentCache.get('turn-2')?.text === '当前分支的新回答'
+            && [...divergentCache.values()].every(snapshot => snapshot.turnIndex <= 2),
+          '切换回答分支后应更新分叉点并清理其后的旧消息'
+        );
+      }
+
+      const changingFixture = document.createElement('section');
+      changingFixture.innerHTML = `<article data-testid="conversation-turn-20">
+        <div data-message-author-role="assistant" data-message-id="streaming-20">
+          <div class="markdown"><p>尚未生成完</p></div>
+        </div>
+      </article>`;
+      chatGPTConversationCache.conversationKey = getChatGPTConversationKey();
+      chatGPTConversationCache.snapshotsByKey = new Map();
+      captureCurrentChatGPTDOM(changingFixture);
+      chatGPTConversationCache.complete = true;
+      changingFixture.querySelector('p').textContent = '现在已经生成完成';
+      captureCurrentChatGPTDOM(changingFixture);
+      assert(!chatGPTConversationCache.complete, '回答内容继续变化后应使完整缓存失效');
+
+      scrollFixture.style.height = '700px';
+      scrollFixture.firstElementChild.style.height = '14000px';
+      scrollFixture.scrollTop = 0;
+      const performanceStarted = performance.now();
+      await scanChatGPTConversationPairs(scrollFixture, {
+        snapshotsByKey: new Map(),
+      });
+      const performanceElapsed = performance.now() - performanceStarted;
+      assert(
+        performanceElapsed < 900,
+        `14,000px 长会话扫描应少于 900ms，当前为 ${Math.round(performanceElapsed)}ms`
+      );
+
+      const result = document.getElementById('test-result');
+      result.dataset.status = failures.length === 0 ? 'pass' : 'fail';
+      result.textContent = failures.length === 0
+        ? 'PASS: ChatGPT 内存缓存与后台扫描验证通过'
+        : `FAIL:\n${failures.join('\n')}`;
+    })();
+  </script>
+</body>
+</html>

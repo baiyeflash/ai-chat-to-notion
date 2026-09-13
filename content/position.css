@@ -1,0 +1,227 @@
+/* ============================================================
+   content/position.css — 精准选择面板布局 / 虚拟列表 / 插入槽
+   ============================================================ */
+
+.c2n-pos-quick-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.c2n-pos-quick-btn {
+  flex: 1;
+  height: 34px;
+  border: 1.5px solid #e5dfd1;
+  border-radius: 8px;
+  background: #fffdf8;
+  color: #1a1611;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.c2n-pos-quick-btn:hover {
+  background: #f5f1e6;
+}
+
+.c2n-pos-quick-btn.active {
+  border-color: #1a1611;
+  background: #1a1611;
+  color: #faf7f0;
+}
+
+#c2n-position-panel {
+  min-width: 0;
+  height: 80vh;
+  max-height: 80vh;
+  overflow: hidden;
+  border-left: 1px solid #e5dfd1;
+  border-radius: 0 16px 16px 0;
+  background: #faf7f0;
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+}
+
+.c2n-position-panel-header {
+  height: 82px;
+  min-height: 82px;
+  padding: 12px 20px 10px;
+  border-bottom: 1px solid #e5dfd1;
+  box-sizing: border-box;
+  flex: 0 0 82px;
+}
+
+.c2n-position-panel-header h2 {
+  margin: 0;
+  color: #1a1611;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.c2n-position-panel-header p {
+  margin: 4px 0 0;
+  overflow: hidden;
+  color: #78716c;
+  font-size: 12px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.c2n-position-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  flex: 1;
+  padding: 16px 18px 18px;
+}
+
+.c2n-position-toolbar {
+  flex: 0 0 auto;
+  padding: 10px 12px;
+  border: 1px solid #e5dfd1;
+  border-radius: 10px;
+  background: #f5f1e6;
+}
+
+.c2n-position-toolbar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: #44403c;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#c2n-position-toolbar-hint {
+  overflow: hidden;
+  color: #8f887c;
+  font-size: 11px;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.c2n-position-toolbar .c2n-pos-quick-row {
+  margin-bottom: 0;
+}
+
+.c2n-pos-quick-btn:disabled {
+  border-color: #e5dfd1;
+  background: #ebe7dd;
+  color: #a39e93;
+  cursor: not-allowed;
+}
+
+.c2n-pos-page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1.5px solid #e5dfd1;
+  border-radius: 10px;
+  background: #fff;
+  box-sizing: border-box;
+  contain: strict;
+  overscroll-behavior: contain;
+}
+
+.c2n-pos-virtual-spacer {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+}
+
+.c2n-pos-virtual-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  will-change: transform;
+}
+
+.c2n-pos-loading,
+.c2n-pos-empty {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  color: #78716c;
+  font-size: 13px;
+  text-align: center;
+}
+
+.c2n-slot {
+  position: relative;
+  height: 18px;
+  cursor: pointer;
+}
+
+.c2n-slot-line {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  left: 10px;
+  height: 2.5px;
+  border-radius: 2px;
+  background: transparent;
+  transform: translateY(-50%);
+  transition: background 0.12s;
+}
+
+.c2n-slot:hover .c2n-slot-line {
+  background: #93c5fd;
+}
+
+.c2n-slot.active .c2n-slot-line {
+  height: 3px;
+  background: #3b82f6;
+}
+
+.c2n-slot-label {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 1px 10px;
+  border: 1.5px solid #93c5fd;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #3b82f6;
+  font-size: 10px;
+  font-weight: 600;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+
+.c2n-slot.active .c2n-slot-label {
+  display: block;
+}
+
+@media (max-width: 760px) {
+  #c2n-position-panel {
+    height: 76vh;
+    max-height: 76vh;
+    border-top: 1px solid #e5dfd1;
+    border-left: none;
+    border-radius: 0 0 16px 16px;
+  }
+
+  .c2n-position-panel-header {
+    min-height: 68px;
+    padding: 12px 16px 10px;
+  }
+
+  .c2n-position-panel-body {
+    padding: 12px;
+  }
+}

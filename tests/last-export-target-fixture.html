@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Last export target fixture</title>
+  <link rel="stylesheet" href="../content/base.css" />
+  <link rel="stylesheet" href="../content/modal.css" />
+  <link rel="stylesheet" href="../content/forms.css" />
+  <link rel="stylesheet" href="../content/position.css" />
+  <link rel="stylesheet" href="../content/position-blocks.css" />
+</head>
+<body>
+  <pre id="test-result">运行中</pre>
+
+  <script>
+    let isModalOpen = false;
+    let selectedPageId = null;
+    let selectedPageTitle = '';
+    let currentExportPairs = [];
+    let exportModalSessionId = 0;
+    let exportCompleted = false;
+
+    async function searchNotionPages() {
+      return { pages: [] };
+    }
+
+    async function getNotionPageBlocks(pageId) {
+      const blocks = [{ id: 'base-block', type: 'paragraph', text: '已有内容' }];
+      if (exportCompleted && pageId === 'remembered-page') {
+        blocks.push({ id: 'created-page-1', type: 'child_page', title: '第一次导入' });
+      }
+      return { blocks };
+    }
+
+    async function exportToNotion() {
+      exportCompleted = true;
+      return { pageId: 'created-page-1' };
+    }
+
+    function buildPageBlocks() {
+      return [];
+    }
+
+    function createParagraphBlock() {
+      return { type: 'paragraph', paragraph: {} };
+    }
+  </script>
+  <script src="../content/utils.js"></script>
+  <script src="../content/extractor.js"></script>
+  <script src="../content/ui-position.js"></script>
+  <script src="../content/ui-modal.js"></script>
+  <script>
+    (async () => {
+      const failures = [];
+      const assert = (condition, message) => {
+        if (!condition) failures.push(message);
+      };
+      const waitForRender = () => new Promise(resolve => setTimeout(resolve, 40));
+      const pairs = [{
+        sourceName: 'ChatGPT',
+        mergedTitle: 'ChatGPT 对话合集',
+        question: '第一轮问题',
+        answer: '第一轮回答',
+      }];
+
+      showExportModal(pairs, {
+        defaultPageId: 'remembered-page',
+        defaultPageTitle: '项目笔记',
+      });
+      await waitForRender();
+
+      document.querySelector('#c2n-pair-list input[type="checkbox"]').checked = true;
+      document.querySelector('.c2n-mode-btn[data-mode="merged"]').click();
+      document.querySelector('.c2n-slot[data-after="base-block"]')?.click();
+      assert(getSelectedPosition()?.after_block?.id === 'base-block',
+        '第一次导出前应能选中精准位置');
+
+      await handleExport();
+      const sourcePageKey = getCurrentSourcePageKey();
+      const remembered = getLastSuccessfulExportTarget(sourcePageKey);
+      assert(remembered?.pageId === 'remembered-page',
+        '成功导出后应记住当前来源页对应的 Notion 页面');
+      assert(remembered?.position?.after_block?.id === 'created-page-1',
+        '精准导出后应把新建页面记为下一次继续导出的锚点');
+      assert(getSelectedPosition()?.after_block?.id === 'created-page-1',
+        '不关闭面板继续选择对话时，也应立即展示到上次导入内容之后');
+      assert(!getLastSuccessfulExportTarget(`${sourcePageKey}/another`),
+        '不同来源页面之间不能共用上次导出目标');
+      assert(getPositionAfterSuccessfulExport(null, ['created-page-2']).type === 'page_end',
+        '使用末尾导入时应继续跟随页面末尾');
+
+      closeModal();
+      showExportModal(pairs, {
+        defaultPageId: 'other-default-page',
+        defaultPageTitle: '全局默认页',
+      });
+      await waitForRender();
+
+      assert(selectedPageId === 'remembered-page',
+        '同一来源页再次打开时应优先使用上次导入页面，而不是全局默认页');
+      assert(document.querySelector('#c2n-page-list .c2n-tag')?.textContent === '上次导入',
+        '恢复的目标页应明确标记为上次导入');
+      assert(getSelectedPosition()?.after_block?.id === 'created-page-1',
+        '同一来源页再次打开时应恢复到上次导入内容之后');
+      assert(document.querySelector('.c2n-slot.active')?.dataset.after === 'created-page-1',
+        '恢复的精准位置应在右侧预览中直接高亮展示');
+
+      closeModal();
+      const result = document.getElementById('test-result');
+      result.dataset.status = failures.length === 0 ? 'pass' : 'fail';
+      result.textContent = failures.length === 0
+        ? 'PASS: 同一来源页记住上次导入目标验证通过'
+        : `FAIL:\n${failures.join('\n')}`;
+    })();
+  </script>
+</body>
+</html>

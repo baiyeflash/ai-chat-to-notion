@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Extractor fixture</title>
+</head>
+<body>
+  <section id="chatgpt-fixture">
+    <article data-testid="conversation-turn-0">
+      <div data-message-author-role="user">
+        <div class="markdown"><p>请给我一个 Python 示例</p></div>
+        <button>编辑消息</button>
+      </div>
+    </article>
+    <div aria-hidden="true">
+      <div data-message-author-role="user"><div class="whitespace-pre-wrap">隐藏的旧分支</div></div>
+    </div>
+    <article data-testid="conversation-turn-1">
+      <div data-message-author-role="assistant">
+        <div class="markdown prose">
+          <p>当然可以。</p>
+          <div><span>python</span><pre><code class="language-python">print('hello')</code></pre></div>
+          <p>这个式子</p>
+          <span role="math" aria-label="CPI=\frac{M}{IC}" data-math-source="CPI=\frac{M}{IC}" style="display: block;">
+            <span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true">
+              <span class="base"><span class="mord mathnormal">CP</span><span class="mord mathnormal">I</span><span class="mrel">=</span></span>
+              <span class="base"><span class="mfrac"><span class="mord">I</span><span class="mord">C</span><span class="mord">M</span></span></span>
+            </span></span></span>
+          </span>
+          <p>其中 <span role="math" aria-label="M" data-math-source="M"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="mord">M</span></span></span></span> 是总周期数。</p>
+          <button aria-label="Copy code">Copy</button>
+        </div>
+      </div>
+    </article>
+    <article data-testid="conversation-turn-2">
+      <div data-message-author-role="user"><div class="whitespace-pre-wrap"></div></div>
+      <img src="attachment.png" alt="附件" />
+    </article>
+  </section>
+
+  <section id="claude-fixture">
+    <div><div data-testid="user-message"><p>解释 DOM</p></div></div>
+    <div><div class="font-claude-response"><p>DOM 是网页的结构树。</p></div></div>
+  </section>
+
+  <section id="chatgpt-writing-block-fixture">
+    <article data-testid="conversation-turn-20">
+      <div data-message-author-role="user" data-message-id="writing-block-user-20">
+        <div class="whitespace-pre-wrap">把安装说明扩展一下</div>
+      </div>
+    </article>
+    <article data-testid="conversation-turn-21">
+      <div data-message-author-role="assistant" data-message-id="writing-block-assistant-21">
+        <div class="markdown prose markdown-new-styling">
+          <p>可以扩成这样：</p>
+          <div data-testid="writing-block-container" data-writing-block="true">
+            <button data-testid="writing-block-header-magic-edit-button">编辑</button>
+            <button aria-label="Copy writing block">复制</button>
+            <div class="writing-block-editor markdown-new-styling">
+              <div class="ProseMirror markdown prose"
+                contenteditable="true"
+                data-writing-block-fullscreen-editor-region="true">
+                <h3>1. 安装前的准备：进入正确的目录</h3>
+                <p>先确认 <code>Python</code> 和 <code>pip</code> 在哪里。</p>
+                <pre><code>C:\Python39\Scripts</code></pre>
+                <blockquote><p><strong>科普补充：</strong>PATH 用来帮助 Windows 寻找命令。</p></blockquote>
+              </div>
+            </div>
+          </div>
+          <p>配置好 PATH 后，可以在项目目录直接安装。</p>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section id="inline-latex-fixture">
+    <p><code>CPI = \frac{M}{IC}</code></p>
+    <p><code>C:\Temp\notes.md</code></p>
+  </section>
+
+  <section id="chatgpt-order-fixture">
+    <article data-testid="conversation-turn-10">
+      <div data-message-author-role="user" data-message-id="user-10">
+        <div class="whitespace-pre-wrap">第十轮问题</div>
+      </div>
+    </article>
+    <article data-testid="conversation-turn-11">
+      <div data-message-author-role="assistant" data-message-id="assistant-11">
+        <div class="markdown"><p>第十轮回答</p></div>
+      </div>
+    </article>
+    <article data-testid="conversation-turn-2">
+      <div data-message-author-role="user" data-message-id="user-2">
+        <div class="whitespace-pre-wrap">第二轮问题</div>
+      </div>
+    </article>
+    <article data-testid="conversation-turn-3">
+      <div data-message-author-role="assistant" data-message-id="assistant-3">
+        <div class="markdown"><p>第二轮回答</p></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="chatgpt-consecutive-user-fixture">
+    <article data-testid="conversation-turn-3">
+      <div data-message-author-role="user" data-message-id="attachment-user-3">
+        <img src="64981.jpg" alt="64981.jpg" />
+      </div>
+    </article>
+    <article data-testid="conversation-turn-5">
+      <div data-message-author-role="user" data-message-id="question-user-5">
+        <img src="64982.jpg" alt="64982.jpg" />
+        <div class="whitespace-pre-wrap">1.6</div>
+      </div>
+    </article>
+    <article data-testid="conversation-turn-6">
+      <div data-message-author-role="assistant" data-message-id="answer-assistant-6">
+        <div class="markdown"><p>这是同一次带图提问的回答。</p></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="blockquote-fixture">
+    <blockquote>
+      <p><strong>程序的平均 CPI:</strong></p>
+      <span role="math" data-math-source="CPI_{\mathrm{avg}} = \frac{M}{IC}" style="display: block;"></span>
+      <ul>
+        <li><span role="math" data-math-source="M"></span>：执行整个程序所花费的总时钟周期数</li>
+        <li><span role="math" data-math-source="IC"></span>：整个程序执行的总指令条数</li>
+      </ul>
+      <p>因此，该公式得到的是<strong>整个程序的平均 CPI</strong>，而不是某一种具体指令的 CPI。</p>
+    </blockquote>
+  </section>
+
+  <section id="simple-blockquote-fixture">
+    <blockquote>普通引用中的<strong>粗体</strong>仍应保留。</blockquote>
+  </section>
+
+  <pre id="test-result">运行中</pre>
+
+  <script src="../content/extractor.js"></script>
+  <script src="../content/converter.js"></script>
+  <script src="../content/builder.js"></script>
+  <script>
+    (async () => {
+    const failures = [];
+    const assert = (condition, message) => {
+      if (!condition) failures.push(message);
+    };
+
+    const chatgptPairs = extractChatGPTConversationPairs(
+      document.getElementById('chatgpt-fixture')
+    );
+    assert(chatgptPairs.length === 2, 'ChatGPT 应提取两轮对话');
+    assert(chatgptPairs[0].question === '请给我一个 Python 示例', 'ChatGPT 用户消息不正确');
+    assert(chatgptPairs[0].answer.includes('当然可以。'), 'ChatGPT 助手消息不正确');
+    assert(!chatgptPairs[0].answer.includes('Copy'), '不应导出复制按钮文字');
+    assert(chatgptPairs[1].question.includes('图片或附件'), '纯附件消息应保留占位说明');
+    assert(
+      buildPageBlocks(chatgptPairs[1]).some(block => extractBlockText(block).includes('图片或附件')),
+      '纯附件占位说明应写入 Notion blocks'
+    );
+
+    const chatgptBlocks = buildPageBlocks(chatgptPairs[0]);
+    assert(
+      chatgptBlocks.some(block => extractBlockText(block) === 'ChatGPT Response'),
+      'ChatGPT 回答标题不正确'
+    );
+    assert(
+      chatgptBlocks.some(block => block.type === 'code' && extractBlockText(block).includes("print('hello')")),
+      'ChatGPT 代码块未转换'
+    );
+    assert(
+      chatgptBlocks.some(block => block.type === 'equation' && block.equation.expression === 'CPI=\\frac{M}{IC}'),
+      'ChatGPT 独立公式应转换为 Notion equation block'
+    );
+    assert(
+      chatgptBlocks.some(block => block.type === 'paragraph'
+        && block.paragraph.rich_text.some(item => item.type === 'equation' && item.equation.expression === 'M')),
+      'ChatGPT 行内公式应转换为 Notion equation rich text'
+    );
+    assert(
+      !chatgptBlocks.some(block => ['CP', 'I', '=', 'C', 'M'].includes(extractBlockText(block))),
+      '不应把 KaTeX 字形拆成多个普通段落'
+    );
+
+    const orderedChatgptPairs = extractChatGPTConversationPairs(
+      document.getElementById('chatgpt-order-fixture')
+    );
+    assert(
+      orderedChatgptPairs.map(pair => pair.question).join('|') === '第二轮问题|第十轮问题',
+      'ChatGPT 消息应按 conversation-turn 编号排序，不能照虚拟化 DOM 的插入顺序'
+    );
+
+    const consecutiveUserPairs = extractChatGPTConversationPairs(
+      document.getElementById('chatgpt-consecutive-user-fixture')
+    );
+    assert(
+      consecutiveUserPairs.length === 1,
+      '同一次带附件提问拆成连续 user 节点时应合并为一轮'
+    );
+    assert(
+      consecutiveUserPairs[0]?.question.includes('图片或附件')
+        && consecutiveUserPairs[0]?.question.includes('1.6')
+        && consecutiveUserPairs[0]?.answer.includes('同一次带图提问的回答'),
+      '合并后的问答应同时保留附件占位、补充文字和 GPT 回答'
+    );
+    assert(
+      buildPageBlocks(consecutiveUserPairs[0] || {}).some(block =>
+        extractBlockText(block).includes('图片或附件')
+      ),
+      '连续 user 节点合并后，附件占位仍应写入 Notion blocks'
+    );
+
+    const writingBlockPairs = extractChatGPTConversationPairs(
+      document.getElementById('chatgpt-writing-block-fixture')
+    );
+    const writingBlockPair = writingBlockPairs[0];
+    const writingBlockNotionBlocks = buildPageBlocks(writingBlockPair || {});
+    assert(writingBlockPairs.length === 1, 'ChatGPT Writing Block 应提取为一轮对话');
+    assert(
+      writingBlockPair?.answer.includes('1. 安装前的准备：进入正确的目录')
+        && writingBlockPair.answer.includes('C:\\Python39\\Scripts')
+        && writingBlockPair.answer.includes('配置好 PATH 后'),
+      'ChatGPT Writing Block 应保留可编辑正文及其前后普通段落'
+    );
+    assert(
+      !writingBlockPair?.answer.includes('编辑') && !writingBlockPair?.answer.includes('复制'),
+      'ChatGPT Writing Block 不应导出编辑或复制按钮'
+    );
+    assert(
+      !writingBlockPair?.answerHtml?.querySelector('[contenteditable="true"]'),
+      '导出克隆应移除 contenteditable 属性，但不能删除正文节点'
+    );
+    assert(
+      writingBlockNotionBlocks.some(block => block.type === 'heading_3'
+        && extractBlockText(block) === '1. 安装前的准备：进入正确的目录')
+        && writingBlockNotionBlocks.some(block => block.type === 'code'
+          && extractBlockText(block) === 'C:\\Python39\\Scripts')
+        && writingBlockNotionBlocks.some(block => block.type === 'quote'
+          && extractBlockText(block).includes('科普补充')),
+      'ChatGPT Writing Block 的标题、代码块和引用应保留为 Notion 结构块'
+    );
+
+    const thirtyFourSnapshots = [];
+    let syntheticTurn = 1;
+    for (let pairIndex = 0; pairIndex < 16; pairIndex++) {
+      if (pairIndex < 2) {
+        thirtyFourSnapshots.push({
+          key: `turn-${syntheticTurn}`, turnIndex: syntheticTurn++, role: 'user', text: '附件', html: null,
+        });
+      }
+      thirtyFourSnapshots.push(
+        { key: `turn-${syntheticTurn}`, turnIndex: syntheticTurn++, role: 'user', text: `问题${pairIndex + 1}`, html: null },
+        { key: `turn-${syntheticTurn}`, turnIndex: syntheticTurn++, role: 'assistant', text: `回答${pairIndex + 1}`, html: null }
+      );
+    }
+    const thirtyFourStats = getChatGPTPairingStats(thirtyFourSnapshots);
+    assert(
+      thirtyFourStats.messageCount === 34
+        && thirtyFourStats.pairCount === 16
+        && thirtyFourStats.completePairCount === 16
+        && buildChatGPTPairsFromSnapshots(thirtyFourSnapshots).length === 16,
+      '18个 user DOM节点加16个assistant节点应合并为16轮完整问答'
+    );
+
+    const claudePairs = extractClaudeConversationPairs(
+      document.getElementById('claude-fixture')
+    );
+    assert(claudePairs.length === 1, 'Claude 应提取一轮对话');
+    assert(claudePairs[0].answer === 'DOM 是网页的结构树。', 'Claude 助手消息不正确');
+    assert(
+      buildPageBlocks(claudePairs[0]).some(block => extractBlockText(block) === 'Claude Response'),
+      'Claude 回答标题应保持不变'
+    );
+
+    const inlineLatexBlocks = htmlToNotionBlocks(
+      document.getElementById('inline-latex-fixture')
+    );
+    assert(
+      inlineLatexBlocks[0]?.paragraph?.rich_text.some(item =>
+        item.type === 'equation' && item.equation.expression === 'CPI = \\frac{M}{IC}'
+      ),
+      '明显的行内 LaTeX code 应转换为 equation rich text'
+    );
+    assert(
+      inlineLatexBlocks[1]?.paragraph?.rich_text.every(item => item.type !== 'equation')
+        && extractBlockText(inlineLatexBlocks[1]) === 'C:\\Temp\\notes.md',
+      '普通路径 code 不应被误判为公式'
+    );
+
+    const blockquoteBlocks = htmlToNotionBlocks(
+      document.getElementById('blockquote-fixture')
+    );
+    const quoteBlock = blockquoteBlocks[0];
+    const quoteChildren = quoteBlock?.quote?.children || [];
+    assert(blockquoteBlocks.length === 1 && quoteBlock?.type === 'quote', '混合内容应保留为一个引用块');
+    assert(
+      extractBlockText(quoteBlock) === '程序的平均 CPI:'
+        && quoteBlock.quote.rich_text.some(item => item.annotations?.bold),
+      '引用标题应保留在 quote 主行并保持粗体'
+    );
+    assert(
+      quoteChildren.some(block => block.type === 'equation'
+        && block.equation.expression === 'CPI_{\\mathrm{avg}} = \\frac{M}{IC}'),
+      '引用内的独立公式应保留为 equation 子块'
+    );
+    assert(
+      quoteChildren.filter(block => block.type === 'bulleted_list_item').length === 2,
+      '引用内的项目符号应保留为两个列表子块'
+    );
+    assert(
+      quoteChildren.some(block => block.type === 'paragraph'
+        && extractBlockText(block).includes('而不是某一种具体指令的 CPI')),
+      '引用内的结论应保留为独立段落子块'
+    );
+
+    const simpleQuoteBlocks = htmlToNotionBlocks(
+      document.getElementById('simple-blockquote-fixture')
+    );
+    assert(
+      simpleQuoteBlocks.length === 1
+        && simpleQuoteBlocks[0]?.type === 'quote'
+        && !simpleQuoteBlocks[0].quote.children
+        && simpleQuoteBlocks[0].quote.rich_text.some(item => item.annotations?.bold),
+      '单行引用应维持原有 rich_text 结构和行内格式'
+    );
+
+    assert(detectCurrentPlatform('chatgpt.com') === 'chatgpt', 'chatgpt.com 平台判断失败');
+    assert(detectCurrentPlatform('chat.openai.com') === 'chatgpt', '旧 ChatGPT 域名判断失败');
+    assert(detectCurrentPlatform('claude.ai') === 'claude', 'Claude 平台判断失败');
+
+    const result = document.getElementById('test-result');
+    result.dataset.status = failures.length === 0 ? 'pass' : 'fail';
+    result.textContent = failures.length === 0
+      ? 'PASS: Claude / ChatGPT DOM、Writing Block、代码、公式与引用转换验证通过'
+      : `FAIL:\n${failures.join('\n')}`;
+    })();
+  </script>
+</body>
+</html>

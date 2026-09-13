@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Modal loading fixture</title>
+  <link rel="stylesheet" href="../content/base.css" />
+  <link rel="stylesheet" href="../content/modal.css" />
+  <link rel="stylesheet" href="../content/forms.css" />
+  <link rel="stylesheet" href="../content/position.css" />
+  <link rel="stylesheet" href="../content/position-blocks.css" />
+</head>
+<body>
+  <pre id="test-result">运行中</pre>
+
+  <script>
+    let isModalOpen = false;
+    let selectedPageId = null;
+    let selectedPageTitle = '';
+    let currentExportPairs = [];
+    let exportModalSessionId = 0;
+
+    async function searchNotionPages() {
+      return { pages: [] };
+    }
+  </script>
+  <script src="../content/utils.js"></script>
+  <script src="../content/extractor.js"></script>
+  <script src="../content/ui-position.js"></script>
+  <script src="../content/ui-modal.js"></script>
+  <script>
+    (async () => {
+      const failures = [];
+      const assert = (condition, message) => {
+        if (!condition) failures.push(message);
+      };
+
+      const sessionId = showExportModal([], {}, { loading: true });
+      assert(isExportModalSessionActive(sessionId), '读取中的面板会话应处于活动状态');
+      assert(document.getElementById('c2n-export')?.disabled, '读取期间应禁用导出按钮');
+      assert(document.querySelector('.c2n-scan-state'), '读取期间应显示后台扫描状态');
+      assert(
+        document.getElementById('c2n-overlay')?.dataset.scanState === 'scanning',
+        '读取期间遮罩应处于 scanning 状态'
+      );
+
+      updateExportModalScanProgress(sessionId, 6, false);
+      assert(
+        document.getElementById('c2n-pair-label')?.textContent.includes('已识别 6 轮')
+          && !document.getElementById('c2n-pair-label')?.textContent.includes('12 条消息'),
+        '读取进度应显示逻辑轮数，避免消息节点数与最终轮数口径跳变'
+      );
+
+      const pairs = [{
+        sourceName: 'ChatGPT',
+        mergedTitle: 'ChatGPT 对话合集',
+        question: '后台读取测试',
+        answer: '读取完成',
+      }];
+      completeExportModalScan(sessionId, pairs);
+      assert(!document.getElementById('c2n-export')?.disabled, '读取完成后应启用导出按钮');
+      assert(document.querySelectorAll('#c2n-pair-list input[type="checkbox"]').length === 1,
+        '读取完成后应填充对话选择列表');
+      assert(document.querySelectorAll('#c2n-pair-list input[type="checkbox"]:checked').length === 0,
+        '读取完成后对话列表应默认全部不选');
+      assert(currentExportPairs === pairs, '导出动作应使用异步读取完成后的对话数据');
+      const footer = document.querySelector('.c2n-modal-footer').getBoundingClientRect();
+      const status = document.getElementById('c2n-status').getBoundingClientRect();
+      const actions = document.querySelector('.c2n-footer-actions').getBoundingClientRect();
+      assert(footer.height <= 64, `完成状态底栏应不超过 64px，当前为 ${Math.round(footer.height)}px`);
+      assert(actions.top < status.bottom, '完成状态和操作按钮应在同一行');
+      assert(
+        document.getElementById('c2n-overlay')?.dataset.scanState === 'ready',
+        '读取完成后遮罩应切换为较轻的 ready 状态'
+      );
+
+      closeModal();
+      assert(!isExportModalSessionActive(sessionId), '关闭面板后应取消当前扫描会话');
+
+      await new Promise(resolve => setTimeout(resolve, 0));
+      const result = document.getElementById('test-result');
+      result.dataset.status = failures.length === 0 ? 'pass' : 'fail';
+      result.textContent = failures.length === 0
+        ? 'PASS: 后台读取面板状态验证通过'
+        : `FAIL:\n${failures.join('\n')}`;
+    })();
+  </script>
+</body>
+</html>

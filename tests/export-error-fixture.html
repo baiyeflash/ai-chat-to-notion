@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Export error fixture</title>
+  <link rel="stylesheet" href="../content/base.css" />
+  <link rel="stylesheet" href="../content/modal.css" />
+  <link rel="stylesheet" href="../content/forms.css" />
+  <link rel="stylesheet" href="../content/position.css" />
+  <link rel="stylesheet" href="../content/position-blocks.css" />
+</head>
+<body>
+  <pre id="test-result">运行中</pre>
+
+  <script>
+    let isModalOpen = false;
+    let selectedPageId = null;
+    let selectedPageTitle = '';
+    let currentExportPairs = [];
+    let exportModalSessionId = 0;
+
+    async function searchNotionPages() {
+      return { pages: [] };
+    }
+
+    async function getNotionPageBlocks() {
+      return { blocks: [] };
+    }
+
+    async function exportToNotion() {
+      throw new Error('Notion API 400：equation.expression 长度超过 1000');
+    }
+
+    function buildPageBlocks() {
+      return [];
+    }
+  </script>
+  <script src="../content/utils.js"></script>
+  <script src="../content/extractor.js"></script>
+  <script src="../content/ui-position.js"></script>
+  <script src="../content/ui-modal.js"></script>
+  <script>
+    (async () => {
+      const failures = [];
+      const assert = (condition, message) => {
+        if (!condition) failures.push(message);
+      };
+      const pairs = [{
+        sourceName: 'ChatGPT',
+        mergedTitle: 'ChatGPT 对话合集',
+        question: '包含错误公式的对话',
+        answer: '模拟 Notion 拒绝请求',
+      }];
+
+      showExportModal(pairs, {
+        defaultPageId: 'fixture-page',
+        defaultPageTitle: '测试页面',
+      });
+      await new Promise(resolve => setTimeout(resolve, 20));
+      document.querySelector('#c2n-pair-list input[type="checkbox"]').checked = true;
+      await handleExport();
+
+      const status = document.getElementById('c2n-status')?.textContent || '';
+      assert(status.includes('0 成功，1 失败'), '应保留失败数量汇总');
+      assert(status.includes('equation.expression 长度超过 1000'),
+        '单条导出失败时必须显示 Notion 返回的具体错误，不能只显示失败数量');
+
+      const result = document.getElementById('test-result');
+      result.dataset.status = failures.length === 0 ? 'pass' : 'fail';
+      result.textContent = failures.length === 0
+        ? 'PASS: 导出失败详情展示验证通过'
+        : `FAIL:\n${failures.join('\n')}\n实际状态：${status}`;
+    })();
+  </script>
+</body>
+</html>

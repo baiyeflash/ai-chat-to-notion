@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Position panel fixture</title>
+  <link rel="stylesheet" href="../content/base.css" />
+  <link rel="stylesheet" href="../content/modal.css" />
+  <link rel="stylesheet" href="../content/forms.css" />
+  <link rel="stylesheet" href="../content/position.css" />
+  <link rel="stylesheet" href="../content/position-blocks.css" />
+</head>
+<body>
+  <pre id="test-result">运行中</pre>
+
+  <script>
+    let isModalOpen = false;
+    let selectedPageId = null;
+    let selectedPageTitle = '';
+    let currentExportPairs = [];
+    let exportModalSessionId = 0;
+
+    async function searchNotionPages() {
+      return { pages: [] };
+    }
+
+    async function getNotionPageBlocks() {
+      return {
+        blocks: Array.from({ length: 1200 }, (_, index) => ({
+          id: `block-${index}`,
+          type: index % 15 === 0 ? 'heading_2' : 'paragraph',
+          text: `第 ${index + 1} 个内容块：这是用于验证长 Notion 页面滚动性能的完整预览文字。`,
+        })),
+      };
+    }
+  </script>
+  <script src="../content/utils.js"></script>
+  <script src="../content/extractor.js"></script>
+  <script src="../content/ui-position.js"></script>
+  <script src="../content/ui-modal.js"></script>
+  <script>
+    (async () => {
+      const failures = [];
+      const assert = (condition, message) => {
+        if (!condition) failures.push(message);
+      };
+      const nextFrame = () => new Promise(resolve => setTimeout(resolve, 16));
+
+      showExportModal([], {});
+      await new Promise(resolve => setTimeout(resolve, 30));
+
+      const workspace = document.getElementById('c2n-workspace');
+      const modal = document.getElementById('c2n-modal');
+      const panel = document.getElementById('c2n-position-panel');
+      const mainBody = modal?.querySelector('.c2n-modal-body');
+      const mainHeightBeforePageSelection = mainBody?.scrollHeight;
+      const positionSection = document.getElementById('c2n-position-section');
+
+      assert(positionSection && panel?.contains(positionSection),
+        '插入位置工具栏应常驻右侧精准选择面板');
+      assert(!modal?.contains(positionSection), '插入位置工具栏不应在选择页面后插入左侧');
+      assert(Array.from(positionSection?.querySelectorAll('button') || []).every(button => button.disabled),
+        '尚未选择目标页面时，位置按钮应原地灰显');
+
+      await loadPositionOptions('fixture-page');
+      await nextFrame();
+      await nextFrame();
+
+      const container = document.getElementById('c2n-position-container');
+      const renderedItems = container?.querySelectorAll('.c2n-pos-virtual-item') || [];
+
+      assert(workspace, '导出界面应使用容纳左右双面板的 workspace');
+      assert(panel, '精准选择应渲染为右侧常驻面板');
+      if (modal && panel) {
+        const modalRect = modal.getBoundingClientRect();
+        const panelRect = panel.getBoundingClientRect();
+        assert(Math.abs(panelRect.left - modalRect.right) <= 1,
+          '左右面板应无缝合并，只保留内部细分隔线');
+        assert(Math.abs(panelRect.width - modalRect.width) <= 2, '左右面板宽度应相同');
+        assert(Math.abs(panelRect.height - modalRect.height) <= 2, '左右面板高度应相同');
+        const modalHeaderRect = modal.querySelector('.c2n-modal-header').getBoundingClientRect();
+        const panelHeaderRect = panel.querySelector('.c2n-position-panel-header').getBoundingClientRect();
+        assert(Math.abs(modalHeaderRect.bottom - panelHeaderRect.bottom) <= 1,
+          '左右 header 的底部分隔线应严格对齐');
+      }
+
+      assert(mainBody?.scrollHeight === mainHeightBeforePageSelection,
+        '选择目标页面后左侧内容高度不应发生跳变');
+      assert(Array.from(positionSection?.querySelectorAll('button') || []).every(button => !button.disabled),
+        '选择目标页面后，右侧位置按钮应原地启用');
+
+      assert(renderedItems.length > 0, '精准选择应渲染当前可见窗口');
+      assert(renderedItems.length <= 80, '1200 个 block 不应一次性全部进入 DOM');
+      assert(container?.querySelectorAll('.c2n-slot').length <= 81,
+        '插入槽数量也应受窗口化渲染限制');
+
+      if (container) {
+        container.scrollTop = Math.max(0, container.scrollHeight - container.clientHeight - 1);
+        container.dispatchEvent(new Event('scroll'));
+        await nextFrame();
+        await nextFrame();
+        const lastItem = container.querySelector('[data-index="1199"]');
+        assert(lastItem, '滚动到底部后应渲染最后一个 block');
+        const lastSlot = lastItem?.querySelector('.c2n-slot');
+        lastSlot?.click();
+        assert(getSelectedPosition()?.after_block?.id === 'block-1199',
+          '窗口化后仍应能选择最后一个 block 作为插入锚点');
+        assert(container.querySelectorAll('.c2n-pos-virtual-item').length <= 80,
+          '滚动到底部后 DOM 节点数量仍应保持固定预算');
+
+        container.scrollTop = 0;
+        container.dispatchEvent(new Event('scroll'));
+        await nextFrame();
+        assert(getSelectedPosition()?.after_block?.id === 'block-1199',
+          '选中的精准锚点离开渲染窗口后仍应保留');
+
+        document.querySelector('.c2n-pos-quick-btn[data-pos="start"]')?.click();
+        assert(getSelectedPosition()?.type === 'page_start',
+          '改选快速位置后应清除精准锚点并返回页面开头');
+      }
+
+      const result = document.getElementById('test-result');
+      result.dataset.status = failures.length === 0 ? 'pass' : 'fail';
+      result.textContent = failures.length === 0
+        ? 'PASS: 右侧常驻精准选择与长页面窗口化验证通过'
+        : `FAIL:\n${failures.join('\n')}`;
+    })();
+  </script>
+</body>
+</html>

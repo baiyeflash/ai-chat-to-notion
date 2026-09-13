@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Chat to Notion 导出面板演示</title>
+  <link rel="stylesheet" href="../../content/base.css" />
+  <link rel="stylesheet" href="../../content/modal.css" />
+  <link rel="stylesheet" href="../../content/forms.css" />
+  <link rel="stylesheet" href="../../content/position.css" />
+  <link rel="stylesheet" href="../../content/position-blocks.css" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; }
+    body {
+      overflow: hidden;
+      background: #f7f7f8;
+      color: #2f2f2f;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .demo-sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: 248px;
+      padding: 22px 18px;
+      border-right: 1px solid #e5e5e5;
+      background: #f1f1f1;
+    }
+    .demo-brand { margin-bottom: 32px; font-weight: 700; }
+    .demo-nav { margin: 10px 0; color: #666; font-size: 14px; }
+    .demo-chat { width: 720px; margin: 0 auto; padding: 76px 30px; }
+    .demo-message { margin-bottom: 32px; line-height: 1.65; }
+    .demo-role { margin-bottom: 8px; font-size: 13px; font-weight: 700; }
+    .demo-answer { padding: 20px 24px; border-radius: 16px; background: #fff; }
+    .demo-badge {
+      position: fixed;
+      top: 18px;
+      right: 22px;
+      z-index: 100002;
+      padding: 7px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 999px;
+      background: rgba(26, 22, 17, 0.82);
+      color: #fff;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+  <aside class="demo-sidebar">
+    <div class="demo-brand">AI 对话</div>
+    <div class="demo-nav">＋ 新对话</div>
+    <div class="demo-nav">收藏与知识整理</div>
+    <div class="demo-nav">浏览器扩展设计</div>
+  </aside>
+  <main class="demo-chat">
+    <div class="demo-message">
+      <div class="demo-role">你</div>
+      <div>怎样把重要的 AI 对话整理到 Notion？</div>
+    </div>
+    <div class="demo-message demo-answer">
+      <div class="demo-role">AI</div>
+      <div>可以把每轮问答保存为独立页面，并保留标题、列表、代码和公式等结构。这样既方便搜索，也能继续整理成自己的知识库。</div>
+    </div>
+  </main>
+  <div class="demo-badge">演示数据 · DEMO</div>
+
+  <script>
+    let isModalOpen = false;
+    let selectedPageId = null;
+    let selectedPageTitle = '';
+    let currentExportPairs = [];
+    let exportModalSessionId = 0;
+
+    async function searchNotionPages() {
+      return { pages: [] };
+    }
+
+    async function getNotionPageBlocks() {
+      return {
+        blocks: [
+          { id: 'intro', type: 'heading_1', text: 'AI 学习与工作笔记' },
+          { id: 'description', type: 'paragraph', text: '这里收集值得长期保留的方法、案例和思考。' },
+          { id: 'divider', type: 'divider' },
+          { id: 'topic', type: 'heading_2', text: '浏览器扩展' },
+          { id: 'existing-page', type: 'child_page', title: '网页信息整理方法' },
+          { id: 'note', type: 'callout', text: '导出前可以点击蓝色插入线，准确选择新页面的位置。', icon: '💡' },
+        ],
+      };
+    }
+
+    async function exportToNotion() {
+      return { pageId: 'demo-created-page' };
+    }
+
+    function buildPageBlocks() { return []; }
+    function createParagraphBlock() { return { type: 'paragraph', paragraph: {} }; }
+  </script>
+  <script src="../../content/utils.js"></script>
+  <script src="../../content/extractor.js"></script>
+  <script src="../../content/ui-position.js"></script>
+  <script src="../../content/ui-modal.js"></script>
+  <script>
+    const demoPairs = [
+      {
+        sourceName: 'ChatGPT',
+        mergedTitle: 'AI 对话整理方法',
+        question: '怎样把重要的 AI 对话整理到 Notion？',
+        answer: '把每轮问答保存成结构化页面。',
+      },
+      {
+        sourceName: 'ChatGPT',
+        mergedTitle: 'AI 对话整理方法',
+        question: '代码块和数学公式能够保留吗？',
+        answer: '可以保留常见格式。',
+      },
+      {
+        sourceName: 'ChatGPT',
+        mergedTitle: 'AI 对话整理方法',
+        question: '能指定插入到 Notion 页面的哪个位置吗？',
+        answer: '可以选择开头、末尾或准确位置。',
+      },
+    ];
+
+    showExportModal(demoPairs, {
+      defaultPageId: 'demo-notion-page',
+      defaultPageTitle: 'AI 学习与工作笔记',
+    });
+
+    setTimeout(() => {
+      const boxes = document.querySelectorAll('#c2n-pair-list input[type="checkbox"]');
+      if (boxes[0]) boxes[0].checked = true;
+      if (boxes[1]) boxes[1].checked = true;
+      const slot = document.querySelector('.c2n-slot[data-after="topic"]');
+      if (slot) slot.click();
+      showStatus('✓ 已选择 2 轮演示对话', 'success');
+    }, 350);
+  </script>
+</body>
+</html>

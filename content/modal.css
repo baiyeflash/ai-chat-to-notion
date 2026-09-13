@@ -1,0 +1,142 @@
+/* ============================================================
+   content/modal.css — 模态内的段落标签 / footer / 按钮 / 状态
+   ============================================================ */
+
+/* ---------- 段落标签 ---------- */
+.c2n-section {
+  margin-bottom: 20px;
+}
+
+.c2n-section:last-child {
+  margin-bottom: 0;
+}
+
+.c2n-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #44403c;
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+
+.c2n-hint {
+  padding: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: #78716c;
+}
+
+.c2n-error {
+  color: #b91c1c;
+}
+
+.c2n-scan-state {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  color: #57534e;
+  font-size: 13px;
+  text-align: center;
+}
+
+.c2n-scan-spinner {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  border: 2px solid #d6d0c4;
+  border-top-color: #1a1611;
+  border-radius: 50%;
+  animation: c2n-scan-spin 0.7s linear infinite;
+}
+
+@keyframes c2n-scan-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- 底部按钮 ---------- */
+.c2n-modal-footer {
+  min-height: 63px;
+  padding: 12px 24px;
+  border-top: 1px solid #e5dfd1;
+  background: #f5f1e6;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.c2n-footer-actions {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 0;
+}
+
+.c2n-btn-primary {
+  height: 38px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 8px;
+  background: #1a1611;
+  color: #faf7f0;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.c2n-btn-primary:hover:not(:disabled) {
+  background: #2a2419;
+}
+
+.c2n-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c2n-btn-secondary {
+  height: 38px;
+  padding: 0 20px;
+  border: 1.5px solid #e5dfd1;
+  border-radius: 8px;
+  background: #fffdf8;
+  color: #44403c;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.c2n-btn-secondary:hover {
+  background: #f5f1e6;
+  border-color: #a39e93;
+}
+
+/* ---------- 状态行 ---------- */
+.c2n-status {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c2n-status-info {
+  color: #44403c;
+}
+
+.c2n-status-success {
+  color: #15803d;
+}
+
+.c2n-status-error {
+  color: #b91c1c;
+  white-space: normal;
+}

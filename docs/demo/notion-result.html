@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Notion 导出结果演示</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; min-height: 100%; margin: 0; }
+    body {
+      background: #fff;
+      color: #37352f;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: 250px;
+      padding: 18px 14px;
+      background: #f7f7f5;
+      color: #5f5e5a;
+      font-size: 14px;
+    }
+    .workspace { margin: 0 8px 24px; color: #37352f; font-weight: 650; }
+    .nav { padding: 7px 10px; border-radius: 6px; }
+    .nav.active { background: #e9e9e7; color: #37352f; }
+    .page {
+      width: 820px;
+      margin-left: calc(250px + (100vw - 250px - 820px) / 2);
+      padding: 68px 56px 90px;
+    }
+    .crumbs { margin-bottom: 60px; color: #9b9a97; font-size: 13px; }
+    .emoji { margin-bottom: 10px; font-size: 70px; line-height: 1; }
+    h1 { margin: 0 0 34px; font-size: 40px; line-height: 1.2; }
+    h2 { margin: 30px 0 12px; font-size: 25px; }
+    p { margin: 8px 0; font-size: 16px; line-height: 1.65; }
+    hr { margin: 28px 0; border: 0; border-top: 1px solid #e9e9e7; }
+    .callout {
+      display: flex;
+      gap: 12px;
+      margin: 20px 0 34px;
+      padding: 16px 18px;
+      border-radius: 5px;
+      background: #f1f1ef;
+      line-height: 1.55;
+    }
+    pre {
+      position: relative;
+      margin: 16px 0;
+      padding: 36px 18px 18px;
+      border-radius: 5px;
+      background: #f7f6f3;
+      font: 14px/1.55 "Cascadia Code", Consolas, monospace;
+    }
+    pre::before {
+      content: "javascript";
+      position: absolute;
+      top: 10px;
+      left: 18px;
+      color: #9b9a97;
+      font: 12px/1.4 ui-sans-serif, sans-serif;
+    }
+    .equation { margin: 22px 0; text-align: center; font: italic 22px Georgia, serif; }
+    .badge {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: #37352f;
+      color: #fff;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="workspace">个人知识库</div>
+    <div class="nav">⌕ 搜索</div>
+    <div class="nav">⌂ 主页</div>
+    <div class="nav active">▾ AI 学习与工作笔记</div>
+    <div class="nav">　📄 网页信息整理方法</div>
+    <div class="nav">　📄 怎样把重要的 AI 对话整理到 Notion？</div>
+  </aside>
+
+  <main class="page">
+    <div class="crumbs">AI 学习与工作笔记 / 怎样把重要的 AI 对话整理到 Notion？</div>
+    <div class="emoji">💬</div>
+    <h1>怎样把重要的 AI 对话整理到 Notion？</h1>
+
+    <div class="callout">
+      <span>🧪</span>
+      <span>这是用于项目 README 的虚构演示内容，不包含真实聊天记录。</span>
+    </div>
+
+    <h2>You Asked</h2>
+    <p>怎样把重要的 AI 对话整理到 Notion，同时保留代码块和数学公式？</p>
+
+    <hr />
+
+    <h2>ChatGPT Response</h2>
+    <p>可以把每轮问答保存为独立的 Notion 子页面。标题负责搜索，正文保留原对话的层级和格式。</p>
+    <p>例如，下面的代码块会继续作为代码显示：</p>
+    <pre>const destination = "Notion";
+console.log(`Export to ${destination}`);</pre>
+    <p>数学公式也会转换为 Notion equation：</p>
+    <div class="equation">E = mc²</div>
+    <p>这样导出的内容既能阅读，也方便以后分类、搜索和继续编辑。</p>
+  </main>
+
+  <div class="badge">演示数据 · DEMO</div>
+</body>
+</html>

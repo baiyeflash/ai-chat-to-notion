@@ -1,0 +1,164 @@
+/* ============================================================
+   popup.css — 扩展设置弹窗样式
+   ============================================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 380px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  background: #faf7f0;
+  color: #1a1611;
+}
+
+.container {
+  padding: 24px;
+}
+
+h1 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #78716c;
+  margin-bottom: 24px;
+}
+
+/* ---------- 表单字段 ---------- */
+.field {
+  margin-bottom: 20px;
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #44403c;
+  margin-bottom: 6px;
+}
+
+.field input {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid #e5dfd1;
+  border-radius: 8px;
+  background: #fffdf8;
+  color: #1a1611;
+  font-size: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.field input:focus {
+  border-color: #a39e93;
+}
+
+.field input::placeholder {
+  color: #a39e93;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+}
+
+.help {
+  font-size: 12px;
+  color: #78716c;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.help a {
+  color: #1a1611;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ---------- 操作按钮 ---------- */
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.btn-primary {
+  flex: 1;
+  height: 38px;
+  border: none;
+  border-radius: 8px;
+  background: #1a1611;
+  color: #faf7f0;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-primary:hover {
+  background: #2a2419;
+}
+
+.btn-secondary {
+  flex: 1;
+  height: 38px;
+  border: 1.5px solid #e5dfd1;
+  border-radius: 8px;
+  background: #fffdf8;
+  color: #44403c;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-secondary:hover {
+  background: #f5f1e6;
+  border-color: #a39e93;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- 消息提示 ---------- */
+.message {
+  min-height: 20px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.message-info { color: #44403c; }
+.message-success { color: #15803d; }
+.message-error { color: #b91c1c; }
+
+/* ---------- 使用说明 ---------- */
+.footer {
+  border-top: 1px solid #e5dfd1;
+  padding-top: 16px;
+}
+
+.footer p {
+  font-size: 13px;
+  font-weight: 600;
+  color: #44403c;
+  margin-bottom: 8px;
+}
+
+.footer ol {
+  font-size: 12px;
+  color: #78716c;
+  padding-left: 20px;
+  line-height: 1.8;
+}
+
+.footer strong {
+  color: #1a1611;
+  font-weight: 600;
+}

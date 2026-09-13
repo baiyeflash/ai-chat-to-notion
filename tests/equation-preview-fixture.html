@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Equation preview fixture</title>
+</head>
+<body>
+  <pre id="test-result">运行中</pre>
+
+  <script>
+    window.chrome = {
+      runtime: { onMessage: { addListener() {} } },
+    };
+    window.fetch = async () => ({
+      ok: true,
+      json: async () => ({
+        results: [{
+          id: 'equation-block',
+          type: 'equation',
+          equation: { expression: '2^n = 8' },
+        }],
+        has_more: false,
+      }),
+    });
+  </script>
+  <script src="../background.js"></script>
+  <script src="../content/utils.js"></script>
+  <script src="../content/ui-position.js"></script>
+  <script>
+    (async () => {
+      const failures = [];
+      const assert = (condition, message) => {
+        if (!condition) failures.push(message);
+      };
+
+      const result = await getPageBlocks({}, 'fixture-page');
+      const equation = result.blocks[0];
+      const previewHtml = renderNotionBlock(equation);
+      const unsafePreviewHtml = renderNotionBlock({
+        type: 'equation',
+        expression: '<img src=x onerror=alert(1)>',
+      });
+
+      assert(equation.expression === '2^n = 8',
+        '后台应把 Notion equation.expression 传给内容脚本');
+      assert(previewHtml.includes('2^n = 8'),
+        '右侧插入位置预览应显示真实公式内容');
+      assert(!previewHtml.includes('>∑ 公式<'),
+        '右侧插入位置预览不能只显示“公式”占位符');
+      assert(!unsafePreviewHtml.includes('<img'),
+        '公式 expression 必须经过 HTML 转义后再写入预览');
+
+      const output = document.getElementById('test-result');
+      output.dataset.status = failures.length === 0 ? 'pass' : 'fail';
+      output.textContent = failures.length === 0
+        ? 'PASS: Notion 公式内容预览验证通过'
+        : `FAIL:\n${failures.join('\n')}`;
+    })();
+  </script>
+</body>
+</html>

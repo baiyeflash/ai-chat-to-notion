@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quote preview fixture</title>
+  <link rel="stylesheet" href="../content/position-blocks.css" />
+</head>
+<body>
+  <pre id="test-result">运行中</pre>
+  <div id="preview"></div>
+
+  <script>
+    window.chrome = {
+      runtime: { onMessage: { addListener() {} } },
+    };
+
+    window.fetch = async url => {
+      const isQuoteChildren = url.includes('/blocks/quote-block/children');
+      return {
+        ok: true,
+        json: async () => isQuoteChildren
+          ? {
+              results: [
+                {
+                  id: 'quote-paragraph',
+                  type: 'paragraph',
+                  paragraph: {
+                    rich_text: [{ plain_text: 'PATH 用来帮助 Windows 寻找命令。' }],
+                  },
+                },
+                {
+                  id: 'quote-equation',
+                  type: 'equation',
+                  equation: { expression: 'CPI = M / IC' },
+                },
+                {
+                  id: 'quote-bullet',
+                  type: 'bulleted_list_item',
+                  bulleted_list_item: {
+                    rich_text: [{ plain_text: '修改后需要重新打开终端。' }],
+                  },
+                },
+              ],
+              has_more: false,
+            }
+          : {
+              results: [{
+                id: 'quote-block',
+                type: 'quote',
+                has_children: true,
+                quote: {
+                  rich_text: [{ plain_text: '科普补充：' }],
+                },
+              }],
+              has_more: false,
+            },
+      };
+    };
+  </script>
+  <script src="../background.js"></script>
+  <script src="../content/utils.js"></script>
+  <script src="../content/ui-position.js"></script>
+  <script>
+    (async () => {
+      const failures = [];
+      const assert = (condition, message) => {
+        if (!condition) failures.push(message);
+      };
+
+      const result = await getPageBlocks({}, 'fixture-page');
+      const quote = result.blocks[0];
+      const previewHtml = renderNotionBlock(quote);
+      const wrapper = document.getElementById('preview');
+      wrapper.innerHTML = previewHtml;
+      const quoteElement = wrapper.querySelector('.c2n-nb-quote');
+      const quoteChildren = wrapper.querySelector('.c2n-nb-quote-children');
+      const lastQuoteChild = quoteChildren?.lastElementChild;
+
+      assert(quote.children?.length === 3,
+        '后台应读取复杂引用块的全部直接子内容');
+      assert(previewHtml.includes('PATH 用来帮助 Windows 寻找命令。'),
+        '精准选择预览应显示引用块内的正文');
+      assert(previewHtml.includes('CPI = M / IC'),
+        '精准选择预览应显示引用块内的公式');
+      assert(previewHtml.includes('修改后需要重新打开终端。'),
+        '精准选择预览应显示引用块内的列表项');
+      assert(quoteElement?.contains(quoteChildren),
+        '引用主行与子内容应位于同一引用样式容器内');
+      assert(getComputedStyle(quoteElement).borderLeftWidth === '3px'
+        && quoteElement.getBoundingClientRect().bottom >= lastQuoteChild.getBoundingClientRect().bottom,
+        '引用左竖线的容器高度应覆盖最后一个子内容');
+
+      const output = document.getElementById('test-result');
+      output.dataset.status = failures.length === 0 ? 'pass' : 'fail';
+      output.textContent = failures.length === 0
+        ? 'PASS: 复杂引用块精准选择预览验证通过'
+        : `FAIL:\n${failures.join('\n')}`;
+    })();
+  </script>
+</body>
+</html>

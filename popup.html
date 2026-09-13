@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="popup.css" />
+  <title>AI Chat to Notion 设置</title>
+</head>
+<body>
+  <div class="container">
+    <h1>⚡ AI Chat to Notion</h1>
+    <p class="subtitle">将 Claude 和 ChatGPT 网页对话一键导出到 Notion</p>
+
+    <div class="field">
+      <label for="token">Notion Integration Token</label>
+      <input type="password" id="token" placeholder="ntn_xxxxxxxxxxxx..." />
+      <p class="help">
+        前往
+        <a href="https://www.notion.so/profile/integrations" target="_blank">
+          Notion Integrations
+        </a>
+        创建一个 Integration，复制 Internal Integration Token 粘贴到这里。
+      </p>
+    </div>
+
+    <div class="field">
+      <label for="pageId">默认父页面 ID（可选）</label>
+      <input type="text" id="pageId" placeholder="粘贴页面 ID 或留空..." />
+      <input type="hidden" id="pageTitle" />
+      <p class="help">
+        打开你想要导出到的 Notion 页面，从 URL 中复制页面 ID（32 位字符串）。
+        留空则每次导出时手动搜索选择。
+      </p>
+    </div>
+
+    <div class="actions">
+      <button id="save" class="btn-primary">保存设置</button>
+      <button id="test" class="btn-secondary">测试连接</button>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <div class="footer">
+      <p>使用说明：</p>
+      <ol>
+        <li>创建 Notion Integration 并获取 Token</li>
+        <li>在 Notion 中将目标页面 <strong>Share</strong> 给你的 Integration</li>
+        <li>打开 Claude 或 ChatGPT 对话页面，点击左下角 <strong>N</strong> 按钮</li>
+        <li>选择页面 → 勾选对话 → 导出</li>
+      </ol>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

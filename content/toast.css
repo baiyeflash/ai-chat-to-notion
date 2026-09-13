@@ -1,0 +1,31 @@
+/* ============================================================
+   content/toast.css — 右下角 Toast 通知
+   ============================================================ */
+
+.c2n-toast {
+  position: fixed;
+  bottom: 84px;
+  left: 24px;
+  z-index: 100002;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  box-shadow: 0 4px 16px rgba(40, 30, 20, 0.15);
+  animation: c2n-slideUp 0.2s ease;
+  transition: opacity 0.3s;
+}
+
+.c2n-toast-success {
+  background: #1a1611;
+  color: #faf7f0;
+}
+
+.c2n-toast-error {
+  background: #7f1d1d;
+  color: #fef2f2;
+}
+
+.c2n-toast-fade {
+  opacity: 0;
+}

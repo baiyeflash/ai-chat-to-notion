@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "AI Chat to Notion",
+  "version": "1.1.16",
+  "description": "一键将 Claude 和 ChatGPT 网页对话导出到 Notion",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": [
+    "https://api.notion.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://claude.ai/*",
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*"
+      ],
+      "js": [
+        "content/utils.js",
+        "content/api.js",
+        "content/extractor.js",
+        "content/chatgpt-cache.js",
+        "content/converter.js",
+        "content/builder.js",
+        "content/ui-button.js",
+        "content/ui-position.js",
+        "content/ui-modal.js",
+        "content/main.js"
+      ],
+      "css": [
+        "content/base.css",
+        "content/modal.css",
+        "content/forms.css",
+        "content/position.css",
+        "content/position-blocks.css",
+        "content/toast.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "AI Chat to Notion 设置"
+  }
+}
